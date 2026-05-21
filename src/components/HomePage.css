@@ -1,0 +1,151 @@
+.homepage {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+}
+
+.banner {
+  text-align: center;
+  padding: 2rem;
+  background: #ffffff;
+}
+
+.banner h1 {
+  color: rgb(231, 0, 11);
+  font-size: clamp(1.5rem, 8vw, 3rem);
+  font-weight: 1000;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.banner h4 {
+  color: rgb(0, 0, 0);
+  font-size: 0.6rem;
+  margin-bottom: 0;
+}
+
+.banner h1 + p + p, .banner h1 + p {
+  color: #1e3a8a;
+  font-size: clamp(0.875rem, 2vw, 1.25rem);
+  font-weight: bold;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+h1 + p + p + p {
+  color: #1e3a8a;
+  font-size: clamp(0.875rem, 2vw, 1.25rem);
+  font-weight: bold;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+.motto, .tagline {
+  font-style: italic;
+  color: rgb(83, 68, 68);
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+
+.donation-drive {
+  margin-top: 1rem;
+  display: inline-block;
+  background: white;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.section {
+  padding: 2rem;
+}
+
+.section.alt {
+  background: #f0f0f0;
+}
+
+.section h2 {
+  margin-bottom: 0.5rem;
+  color: rgb(231, 0, 11);
+}
+
+.section p, .section ul, .section ol {
+  font-size: 1.2rem;
+  margin: 0 auto;
+  max-width: 1000px;
+}
+
+.photo {
+  text-align: center;
+}
+
+.photo img {
+  max-width: 600px;
+  width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.photo figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.footer {
+  background: rgb(231, 0, 11);
+  color: white;
+  padding: 0 1rem 1rem;
+  margin-top: 0;
+}
+
+a {
+  color: #1e3a8a;
+  text-decoration: none;
+  font-size: 1.11rem;
+}
+
+.two-columns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.left-col, .right-col {
+  flex: 1;
+  min-width: 280px;
+}
+
+.left-col section, .right-col section {
+  margin-bottom: 1.5rem;
+}
+
+.left-col h3, .right-col h3 {
+  color: rgb(231, 0, 11);
+  margin-bottom: 0.5rem;
+}
+
+.right-col p {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #333;
+  line-height: 1.5;
+  margin-top: 20px;
+  text-align: justify;
+}
+
+.right-col{
+  margin-left: 1rem;
+}
+
+p strong {
+  color: rgb(231, 0, 11);
+  font-size: larger;
+  font-style: italic;
+}
+
+.history-image {
+  width: 100%;
+  max-width: 250px;
+  border-radius: 8px;
+}
