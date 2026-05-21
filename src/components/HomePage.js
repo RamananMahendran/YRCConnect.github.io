@@ -74,7 +74,7 @@ export default function HomePage() {
       <div className="right-col">
             <section className="section">
               <h2>History of Youth Red Cross</h2>
-              <img src="/images/founder.jpeg" alt="YRC History" className="history-image" />
+              <img src={process.env.PUBLIC_URL + "/images/founder.jpeg"} alt="YRC History" className="history-image" />
               <p>
                 The Red Cross was founded in 1863 in Geneva by Jean Henry Dunant,
                 the first Nobel Peace Prize recipient in 1901. The <strong>Youth Red Cross </strong>
@@ -104,7 +104,7 @@ export default function HomePage() {
       <section className="section photo">
         <figure>
           <img
-            src="/images/groupphoto.png"
+            src={process.env.PUBLIC_URL + "/images/groupphoto.png"}
             alt="YRC Group at SSNCE Fountain"
           />
           <figcaption>
