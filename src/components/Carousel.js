@@ -49,17 +49,6 @@ export default function Carousel() {
     <div className="carousel">
       <img src={images[current]} alt={`Slide ${current}`} className="carousel-image" />
 
-      {/* Navigation dots */}
-      <div className="carousel-dots">
-        {images.map((_, index) => (
-          <span
-            key={index}
-            className={`dot ${index === current ? "active" : ""}`}
-            onClick={() => goToSlide(index)}
-          ></span>
-        ))}
-      </div>
-
       {/* Prev/Next buttons */}
       <button
         className="carousel-btn prev"
