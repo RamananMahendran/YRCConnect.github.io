@@ -1,0 +1,238 @@
+.portal-container {
+  background: linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)),
+              url("../images/ssn.jpg") no-repeat center center fixed;
+  background-size: cover;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  overflow-x: hidden; /* prevent horizontal scroll */
+}
+
+.portal-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 30px;
+  max-width: 900px;
+  margin: 2rem auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.portal-card h2 {
+  margin-top: 0;
+  color: #1e3a8a;
+  font-size: 1.8rem;
+  text-align: center;
+}
+
+.portal-subtitle {
+  color: #555;
+  margin-bottom: 25px;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.portal-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 15px;
+  align-items: flex-end;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.form-group label {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 6px;
+  color: #1e3a8a;
+}
+
+.form-group input,
+.form-group select {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+  background-color: #fff;
+  width: 100%;       /* keep inside card */
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: rgb(231, 0, 11);
+}
+
+.portal-submit-btn {
+  background-color: rgb(231, 0, 11);
+  color: white;
+  padding: 11px 24px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background-color 0.2s;
+  width: 100%;       /* full width on mobile */
+  box-sizing: border-box;
+}
+
+.portal-submit-btn:hover {
+  background-color: #a00000;
+}
+
+.portal-submit-btn:disabled {
+  background-color: #c0c0c0;
+  cursor: not-allowed;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .portal-form {
+    grid-template-columns: 1fr; /* stack vertically */
+    gap: 20px;
+  }
+  .form-group {
+    margin-bottom: 10px;        /* ensures spacing between inputs */
+  }
+  .portal-card {
+    padding: 20px;
+  }
+
+  .portal-card h2 {
+    font-size: 1.5rem;
+  }
+
+  .form-group label {
+    font-size: 1rem;
+  }
+
+  .portal-submit-btn {
+    font-size: 1rem;
+    padding: 12px;
+    margin-top: 5px;
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .attendance-metric-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+}
+
+
+.attendance-metric-card h3 {
+  margin: 0;
+  color: #1e3a8a;
+}
+
+.metric-display-badge {
+  text-align: center;
+  background: #fff0f0;
+  border: 1px solid #f5c2c2;
+  padding: 10px 20px;
+  border-radius: 8px;
+}
+
+.metric-number {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1e3a8a;
+}
+
+.metric-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #555;
+}
+
+.events-timeline-section h3 {
+  color: #1e3a8a;
+  margin-bottom: 15px;
+}
+
+.no-events-text {
+  color: #777;
+  font-style: italic;
+}
+
+.events-list-wrapper {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.event-item-card {
+  border-left: 4px solid #1e3a8a;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  border: 1px solid #eee;
+  padding: 15px;
+  margin-bottom: 12px;
+  border-radius: 0 6px 6px 0;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.event-item-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.event-meta-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 5px;
+  flex-wrap: wrap;
+}
+
+.event-badge-id {
+  background: #ffe5e5;
+  border: 1px solid #f5c2c2;
+  color: rgb(231, 0, 11);
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.event-meta-header h4 {
+  margin: 0;
+  color: #1e3a8a;
+  font-size: 1.05rem;
+}
+
+.event-desc-text {
+  margin: 0;
+  color: #444;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.student-info-header h3 {
+  color: #1e3a8a;
+  margin-bottom: 15px;
+  font-size: 2rem;
+}
+
+.student-info-header p {
+  color: rgb(231, 0, 11);
+  font-size: 1.25rem;
+  margin: 0;
+}
