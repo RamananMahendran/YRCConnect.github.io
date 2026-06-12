@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./ContactPage.css";
 import Header from "./Header";
 import Footer from "./Footer";
@@ -6,12 +6,15 @@ import Footer from "./Footer";
 export default function ContactPage() {
   const [organizers, setOrganizers] = useState([]);
   const [loadingOrganizers, setLoadingOrganizers] = useState(true);
+  const [selectedBatch, setSelectedBatch] = useState("2026");
+  const organizersCache = useRef({});
 
   // Configuration for dashboard support email routing
   const DASHBOARD_SUPPORT_API_URL = "https://script.google.com/macros/s/AKfycbwQ5bQqQ-odREoNb609QFv7xLuL9JJomMwvgbsUCYqxps4Mm1TcQDnlYWBh-bPgBB3C/exec"; // Paste the deployed Google Apps Script URL here
 
   // Support Form State variables
   const [studentName, setStudentName] = useState("");
+  const [studentEmail, setStudentEmail] = useState("");
   const [digitalId, setDigitalId] = useState("");
   const [deptYear, setDeptYear] = useState("");
   const [issueType, setIssueType] = useState("");
@@ -27,22 +30,37 @@ export default function ContactPage() {
   const ORGANIZERS_API_URL = "https://script.google.com/macros/s/AKfycbwvVxo1-Wcd1fHtDGUbl8znxunM3eGcLPyTr1S0mY4hG3mHKwlaV733k2Y9jFezHNe2kg/exec";
 
   useEffect(() => {
-    fetch(ORGANIZERS_API_URL)
+    // Check if data is already cached
+    if (organizersCache.current[selectedBatch]) {
+      setOrganizers(organizersCache.current[selectedBatch]);
+      setLoadingOrganizers(false);
+      return;
+    }
+
+    setLoadingOrganizers(true);
+    const targetUrl = `${ORGANIZERS_API_URL}?batch=${selectedBatch}`;
+
+    fetch(targetUrl)
       .then((res) => {
         if (!res.ok) throw new Error("Network response unstable");
         return res.json();
       })
       .then((data) => {
-        if (!data.error) {
+        if (data && !data.error) {
           setOrganizers(data);
+          // Store in cache
+          organizersCache.current[selectedBatch] = data;
+        } else {
+          setOrganizers([]);
         }
         setLoadingOrganizers(false);
       })
       .catch((err) => {
         console.error("Error fetching organizers:", err);
+        setOrganizers([]);
         setLoadingOrganizers(false);
       });
-  }, []);
+  }, [selectedBatch]);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -72,7 +90,7 @@ export default function ContactPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!studentName || !digitalId || !deptYear || !issueType || !description) {
+    if (!studentName || !studentEmail || !digitalId || !deptYear || !issueType || !description) {
       setSubmitError("All required fields must be filled.");
       return;
     }
@@ -83,6 +101,7 @@ export default function ContactPage() {
 
     const payload = {
       name: studentName,
+      email: studentEmail,
       digitalId: digitalId,
       deptYear: deptYear,
       issueType: issueType,
@@ -100,6 +119,7 @@ export default function ContactPage() {
         setSubmitStatus("success");
         // Clear fields
         setStudentName("");
+        setStudentEmail("");
         setDigitalId("");
         setDeptYear("");
         setIssueType("");
@@ -126,6 +146,7 @@ export default function ContactPage() {
       setSubmitStatus("success");
       // Clear fields
       setStudentName("");
+      setStudentEmail("");
       setDigitalId("");
       setDeptYear("");
       setIssueType("");
@@ -149,26 +170,26 @@ export default function ContactPage() {
         <section className="contact-central-card">
           <h2>LEADERSHIP</h2>
           <p className="section-subtitle">YRC AT SSN IS LED BY:</p>
-          <div className="organizer-row-card">
+          <div className="organizer-row-card" href="https://www.ssn.edu.in/electronics-and-communication-engineering/faculty/dr-s-radha-senior-professor-and-principal/" target="_blank" rel="noopener noreferrer">
             <div className="org-avatar-circle">
               {'R'.charAt(0).toUpperCase()}
             </div>
             <div className="org-info-block">
               <div className="org-header-row">
-                <h3>DR. S. RADHA</h3>
+                <h3><a href="https://www.ssn.edu.in/electronics-and-communication-engineering/faculty/dr-s-radha-senior-professor-and-principal/" target="_blank" rel="noopener noreferrer">DR. S. RADHA</a></h3>
                 <span className="org-role-tag">PRINCIPAL OF SSNCE</span>
                 <p className="org-description-text">The cornerstone of the YRC ecosystem at SSN — friend, philosopher, guide, and overall facilitator.</p>
               </div>
             </div>
           </div>
           <span className="leadership-divider"><pre></pre></span>
-          <div className="organizer-row-card">
+          <div className="organizer-row-card" >
             <div className="org-avatar-circle">
               {'Programme Officer'.charAt(0).toUpperCase()}
             </div>
             <div className="org-info-block">
               <div className="org-header-row">
-                <h3>Dr. V. Thiyagarajan</h3>
+                <h3><a href="https://www.ssn.edu.in/electrical-and-electronics-engineering-department/faculty/dr-v-thiyagarajan-associate-professor/" target="_blank" rel="noopener noreferrer">Dr. V. Thiyagarajan</a></h3>
                 <span className="org-role-tag">YRC Programme Officer & In-Charge</span>
                 <p className="org-description-text">Spearheads the unit. Strategic planning, financial budgeting, supervision, and direct liaison with College and District Red Cross headquarters.</p>
               </div>
@@ -179,10 +200,23 @@ export default function ContactPage() {
           <h2>YRC Core Team & Organizers</h2>
           <p className="section-subtitle">Reach out directly to our student coordinators and program executives</p>
 
+          {/* Batch Selector Tabs */}
+          <div className="batch-tabs-container">
+            {["2026", "2025", "2024", "2023", "2022"].map((batch) => (
+              <button
+                key={batch}
+                className={`batch-tab-btn ${selectedBatch === batch ? "active" : ""}`}
+                onClick={() => setSelectedBatch(batch)}
+              >
+                Batch {batch}
+              </button>
+            ))}
+          </div>
+
           {loadingOrganizers ? (
-            <div className="directory-loader">Loading organizers database profiles...</div>
+            <div className="directory-loader">Loading Batch {selectedBatch} organizers directory...</div>
           ) : organizers.length === 0 ? (
-            <p className="empty-directory-text">No active organizers listed in database registers currently.</p>
+            <p className="empty-directory-text">No active organizers listed in database registers for Batch {selectedBatch} currently.</p>
           ) : (
             <div className="single-column-stack">
               {organizers.map((org, index) => (
@@ -197,7 +231,7 @@ export default function ContactPage() {
                     </div>
                     <div className="org-links-row">
                       {org.phone && (
-                        <a href={`tel:${org.phone}`} className="contact-action-link">
+                        <a href={`https://www.${org.phone}`} className="contact-action-link">
                           <span className="icon-span">💻</span> {org.phone}
                         </a>
                       )}
@@ -255,6 +289,18 @@ export default function ContactPage() {
                     value={studentName}
                     onChange={(e) => setStudentName(e.target.value)}
                     placeholder="Enter your full name"
+                    required
+                  />
+                </div>
+
+                <div className="support-form-group">
+                  <label htmlFor="studentEmail">Student Email <span className="required-star">*</span></label>
+                  <input
+                    id="studentEmail"
+                    type="email"
+                    value={studentEmail}
+                    onChange={(e) => setStudentEmail(e.target.value)}
+                    placeholder="e.g. student@ssn.edu.in"
                     required
                   />
                 </div>
