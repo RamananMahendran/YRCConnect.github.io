@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/YRCConnect.github.io/static/css/main.248f1b1b.css",
-    "main.js": "/YRCConnect.github.io/static/js/main.088c2b42.js",
+    "main.css": "/YRCConnect.github.io/static/css/main.2e336732.css",
+    "main.js": "/YRCConnect.github.io/static/js/main.f4c6690b.js",
     "static/js/453.aab2809e.chunk.js": "/YRCConnect.github.io/static/js/453.aab2809e.chunk.js",
     "static/media/ssn.jpg": "/YRCConnect.github.io/static/media/ssn.e52817964e8ec30e09b9.jpg",
     "index.html": "/YRCConnect.github.io/index.html",
-    "main.248f1b1b.css.map": "/YRCConnect.github.io/static/css/main.248f1b1b.css.map",
-    "main.088c2b42.js.map": "/YRCConnect.github.io/static/js/main.088c2b42.js.map",
+    "main.2e336732.css.map": "/YRCConnect.github.io/static/css/main.2e336732.css.map",
+    "main.f4c6690b.js.map": "/YRCConnect.github.io/static/js/main.f4c6690b.js.map",
     "453.aab2809e.chunk.js.map": "/YRCConnect.github.io/static/js/453.aab2809e.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.248f1b1b.css",
-    "static/js/main.088c2b42.js"
+    "static/css/main.2e336732.css",
+    "static/js/main.f4c6690b.js"
   ]
 }
