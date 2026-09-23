@@ -1,165 +1,116 @@
 function doGet(e) {
-  try {
-    var digitalId = e.parameter.digitalId;
-    var department = e.parameter.department;
-    
-    if (!digitalId || !department) {
-      return createJsonResponse({ error: true, message: "Missing Digital ID or Department parameters." });
+  // 1. Get parameters from React fetch
+  const digitalId = e.parameter.digitalId;
+  const batch = e.parameter.batch;
+  
+  if (!digitalId || !batch) {
+    return createJsonResponse({ error: true, message: "Missing Digital ID or Batch parameters." });
+  }
+
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  
+  // 2. Access the respective Batch sheet and the Details sheet
+  const batchSheet = ss.getSheetByName(`YRC"${batch}`); 
+  const detailsSheet = ss.getSheetByName("EVENT DETAILS");
+
+  if (!batchSheet) {
+    return createJsonResponse({ error: true, message: "Batch records for '" + batch + "' not found." });
+  }
+  if (!detailsSheet) {
+    return createJsonResponse({ error: true, message: "Event details database not found." });
+  }
+
+  // 3. Find the user in the Batch sheet
+  const batchData = batchSheet.getDataRange().getValues();
+  const headers = batchData[0];
+  let userRow = null;
+  
+  // Assuming Digital ID is in Column B (index 1)
+  for (let i = 1; i < batchData.length; i++) {
+    if (String(batchData[i][2]) === String(digitalId)) {
+      userRow = batchData[i];
+      break;
     }
-    
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
-    
-    // 1. Target Department Sheet
-    var deptSheet = ss.getSheetByName(department.trim());
-    if (!deptSheet) {
-      return createJsonResponse({ error: true, message: "Department tab '" + department + "' not found in spreadsheet config." });
+  }
+
+  if (!userRow) {
+    return createJsonResponse({ error: true, message: "Digital ID not found in batch records." });
+  }
+
+  // 4. Extract basic user info
+  // Assuming: Col D (index 3) is Name, Col E (index 4) is Attendance
+  const studentName = userRow[3];
+  const totalAttendance = userRow[4] || 0;
+  const dept = userRow[1] || "Unknown Department";
+
+  // 5. Find which events the user attended
+  const attendedEventIds = [];
+  // Assuming events start at Column F (index 5)
+  for (let col = 5; col < headers.length; col++) {
+    const hoursAttended = userRow[col];
+    // If the cell contains a number (hours) greater than 0, they attended
+    if (hoursAttended && !isNaN(hoursAttended) && hoursAttended > 0) {
+      attendedEventIds.push(headers[col]); 
     }
-    
-    var deptData = deptSheet.getDataRange().getValues();
-    
-    // Dynamically discover the main table header row by searching for "digital id"
-    var headerRowIndex = -1;
-    for (var r = 0; r < Math.min(deptData.length, 10); r++) {
-      for (var c = 0; c < deptData[r].length; c++) {
-        if (deptData[r][c] && deptData[r][c].toString().toLowerCase().trim() === "digital id") {
-          headerRowIndex = r;
-          break;
-        }
-      }
-      if (headerRowIndex !== -1) break;
-    }
-    
-    // Fallback block if table headers cannot be programmatically inferred
-    if (headerRowIndex === -1) {
-       headerRowIndex = 5; // Default index offset for 5 rows above header
-    }
-    
-    var headers = deptData[headerRowIndex];
-    var idColIndex = headers.findIndex(h => h.toString().toLowerCase().trim() === "digital id");
-    
-    // Scan for attendance summary metrics or map via event ratios
-    var attendanceColIndex = headers.findIndex(h => h.toString().toLowerCase().trim().includes("attendance") || h.toString().toLowerCase().trim().includes("%"));
-    
-    if (idColIndex === -1) {
-      return createJsonResponse({ error: true, message: "Could not find 'Digital ID' column in layout map index." });
-    }
-    
-    // 2. Identify Target Student Record
-    var volunteerRow = null;
-    for (var i = headerRowIndex + 1; i < deptData.length; i++) {
-      if (deptData[i][idColIndex] && deptData[i][idColIndex].toString().trim().toLowerCase() === digitalId.trim().toLowerCase()) {
-        volunteerRow = deptData[i];
+  }
+
+  // 6. Map Event IDs to Event Details from the 'details' tab
+  const detailsData = detailsSheet.getDataRange().getValues();
+  const attendedEventsList = [];
+  
+  // Loop through attended event IDs and find their details
+  attendedEventIds.forEach(eventId => {
+    let eventFound = false;
+    // Skip details header row
+    for (let j = 3; j < detailsData.length; j++) {
+      // Assuming Event ID is in Col B (index 1) of 'details' tab
+      if (String(detailsData[j][1]) === String(eventId)) {
+        attendedEventsList.push({
+          id: eventId,
+          name: detailsData[j][2] || "Unnamed Event",     // Col C
+          date: formatDate(detailsData[j][3]) || "",      // Col D
+          pdfLink: detailsData[j][6] || ""                // Col G
+        });
+        eventFound = true;
         break;
       }
     }
     
-    if (!volunteerRow) {
-      return createJsonResponse({ error: true, message: "Volunteer profile record not found for ID: " + digitalId });
-    }
-    
-    // Compute or read tracking metric
-    var attendanceValue = "0%";
-    if (attendanceColIndex !== -1 && volunteerRow[attendanceColIndex]) {
-      attendanceValue = volunteerRow[attendanceColIndex].toString();
-    }
-    
-    // Identify individual columns containing positive attendance markers
-    var attendedEventIds = [];
-    for (var j = 0; j < headers.length; j++) {
-      if (j !== idColIndex && j !== attendanceColIndex && headers[j] && j > idColIndex) {
-        var marker = volunteerRow[j] ? volunteerRow[j].toString().trim().toLowerCase() : "";
-        // Checks for flags matching "1", "p", or numerical tallies
-        if (marker === "1" || marker === "p" || (Number(marker) && Number(marker) > 0)) {
-          var cleanedEventId = headers[j].toString().trim();
-          if (cleanedEventId) {
-            attendedEventIds.push(cleanedEventId);
-          }
-        }
-      }
-    }
-    
-    // 3. Map to Event Details Tab (parsing row offsets)
-    var eventsList = [];
-    var detailsSheet = ss.getSheetByName("EVENT DETAILS");
-    
-    if (detailsSheet && attendedEventIds.length > 0) {
-      var detailsData = detailsSheet.getDataRange().getDisplayValues();
-      
-      // Discover header mapping row dynamically
-      var detailsHeaderIndex = -1;
-      for (var dr = 0; dr < Math.min(detailsData.length, 6); dr++) {
-        for (var dc = 0; dc < detailsData[dr].length; dc++) {
-          if (detailsData[dr][dc] && detailsData[dr][dc].toString().toLowerCase().trim() === "EVENT CODE") {
-            detailsHeaderIndex = dr;
-            break;
-          }
-        }
-        if (detailsHeaderIndex !== -1) break;
-      }
-      
-      if (detailsHeaderIndex === -1) detailsHeaderIndex = 3; // Fallback index mapping row 4
-      
-      var detailsHeaders = detailsData[detailsHeaderIndex];
-      var detailIdIndex = detailsHeaders.findIndex(h => h.toString().toLowerCase().trim() === "event code");
-      var detailNameIndex = detailsHeaders.findIndex(h => h.toString().toLowerCase().trim() === "name");
-      var detailDescIndex = detailsHeaders.findIndex(h => h.toString().toLowerCase().trim() === "date" || h.toString().toLowerCase().trim() === "details");
-      
-      // ... [Keep the top half of your doGet function exactly the same] ...
-
-      var eventMap = {};
-      for (var k = detailsHeaderIndex + 1; k < detailsData.length; k++) {
-        var rowId = detailsData[k][detailIdIndex];
-        if (rowId) {
-          // Clean the ID by forcing lowercase and stripping trailing/leading whitespace
-          var cleanRowId = rowId.toString().trim().toLowerCase();
-          
-          eventMap[cleanRowId] = {
-            name: detailNameIndex !== -1 && detailsData[k][detailNameIndex] ? detailsData[k][detailNameIndex].toString().trim() : "YRC Event Asset",
-            description: detailDescIndex !== -1 && detailsData[k][detailDescIndex] ? detailsData[k][detailDescIndex].toString().trim() : "No structural description text defined."
-          };
-        }
-      }
-      
-      // Compile final lookup mappings
-      attendedEventIds.forEach(function(id) {
-        // Clean the target search key identically
-        var lookupKey = id.toString().trim().toLowerCase();
-        
-        if (eventMap[lookupKey]) {
-          eventsList.push({
-            id: id,
-            name: eventMap[lookupKey].name,
-            description: eventMap[lookupKey].description
-          });
-        } else {
-          eventsList.push({
-            id: id,
-            name: "Event ID Match (" + id + ")",
-            description: "No description found at details tab"
-          });
-        }
+    // Fallback if event is in the batch header but missing from 'details' tab
+    if (!eventFound) {
+      attendedEventsList.push({
+        id: eventId,
+        name: "Unknown Event",
+        date: "",
+        pdfLink: ""
       });
-    } else if (attendedEventIds.length > 0) {
-      eventsList = attendedEventIds.map(id => ({ id: id, name: "Event Reference ID: " + id, description: "Detailed summary logs offline." }));
     }
-    
-    // Calculate a dynamic percentage fallback count if explicit metrics columns are absent
-    if (attendanceValue === "0%" && attendedEventIds.length > 0) {
-      attendanceValue = attendedEventIds.length + " Verified Event(s) Attended";
-    }
-    
-    return createJsonResponse({
-      success: true,
-      attendance: attendanceValue,
-      events: eventsList
-    });
-    
-  } catch (err) {
-    return createJsonResponse({ error: true, message: "Server parsing runtime error: " + err.toString() });
-  }
+  });
+
+  // 7. Return the final payload
+  const responsePayload = {
+    error: false,
+    name: studentName,
+    dept: dept,
+    attendance: totalAttendance,
+    events: attendedEventsList
+  };
+
+  return createJsonResponse(responsePayload);
 }
 
-function createJsonResponse(outputObject) {
-  return ContentService.createTextOutput(JSON.stringify(outputObject))
+// Helper function to format dates correctly for JSON
+function formatDate(dateObj) {
+  if (!dateObj) return "";
+  if (dateObj instanceof Date) {
+    // Formats to DD/MM/YYYY or your preferred format
+    return Utilities.formatDate(dateObj, Session.getScriptTimeZone(), "MMMM dd, yyyy");
+  }
+  return String(dateObj);
+}
+
+// Helper function to output JSON
+function createJsonResponse(data) {
+  return ContentService.createTextOutput(JSON.stringify(data))
     .setMimeType(ContentService.MimeType.JSON);
 }

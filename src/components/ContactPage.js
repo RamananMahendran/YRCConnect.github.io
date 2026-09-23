@@ -208,13 +208,13 @@ export default function ContactPage() {
                 className={`batch-tab-btn ${selectedBatch === batch ? "active" : ""}`}
                 onClick={() => setSelectedBatch(batch)}
               >
-                Batch {batch}
+                Year {batch}
               </button>
             ))}
           </div>
 
           {loadingOrganizers ? (
-            <div className="directory-loader">Loading Batch {selectedBatch} organizers directory...</div>
+            <div className="directory-loader">Loading Year {selectedBatch} organizers directory...</div>
           ) : organizers.length === 0 ? (
             <p className="empty-directory-text">No active organizers listed in database registers for Batch {selectedBatch} currently.</p>
           ) : (

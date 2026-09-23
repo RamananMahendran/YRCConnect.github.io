@@ -4,6 +4,124 @@ import Header from "./Header";
 import Footer from "./Footer";
 import "./AboutPage.css";
 
+const LEADERSHIP_DATA = [
+  {
+    level: "Global",
+    icon: (
+      <svg className="hierarchy-icon" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="10" />
+        <line x1="2" y1="12" x2="22" y2="12" />
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+      </svg>
+    ),
+    position: "IFRC President",
+    bearer: "Ms. Kate Forbes",
+    isOdd: true
+  },
+  {
+    level: "National",
+    icon: <span className="hierarchy-badge-icon">IN</span>,
+    position: "IRCS President",
+    bearer: "Hon'ble President of India",
+    isOdd: false
+  },
+  {
+    level: "State",
+    icon: (
+      <svg className="hierarchy-icon" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 22h18M6 18v-6M10 18v-6M14 18v-6M18 18v-6M4 11l8-7 8 7M2 11h20" />
+      </svg>
+    ),
+    position: "State IRCS President",
+    bearer: "Hon'ble Governor of Tamil Nadu",
+    isOdd: true
+  },
+  {
+    level: "District",
+    icon: (
+      <svg className="hierarchy-icon" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <rect x="4" y="2" width="16" height="20" rx="2" ry="2" />
+        <line x1="9" y1="22" x2="9" y2="16" />
+        <line x1="15" y1="22" x2="15" y2="16" />
+        <line x1="9" y1="16" x2="15" y2="16" />
+        <path d="M8 6h.01M8 10h.01M12 6h.01M12 10h.01M16 6h.01M16 10h.01M12 14h.01" />
+      </svg>
+    ),
+    position: "District IRCS President",
+    bearer: "District Collector",
+    isOdd: false
+  },
+  {
+    level: "University",
+    icon: (
+      <svg className="hierarchy-icon" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+        <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" />
+      </svg>
+    ),
+    position: "University YRC Coordinator",
+    bearer: "Nominee of Anna University Vice-Chancellor",
+    isOdd: true
+  },
+  {
+    level: "Institution",
+    icon: (
+      <svg className="hierarchy-icon" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M22 22H2M4 22V10l8-5 8 5v12M12 5V2M10 2h4M10 14h4v8h-4z" />
+      </svg>
+    ),
+    position: "College Patron",
+    bearer: "Principal",
+    isOdd: false
+  },
+  {
+    level: "Faculty",
+    icon: (
+      <svg className="hierarchy-icon" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M19 8v6M22 11h-6" />
+      </svg>
+    ),
+    position: "YRC Programme Officer",
+    bearer: "Faculty In-Charge",
+    isOdd: true
+  },
+  {
+    level: "Students",
+    icon: (
+      <svg className="hierarchy-icon" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </svg>
+    ),
+    position: "YRC Volunteers",
+    bearer: "Student Members",
+    isOdd: false
+  }
+];
+
+const BLOOD_DONOR_DATA = [
+  { sNo: 1, name: "Seran", date: "08/09/2025", place: "SIMS Hospital, Chennai" },
+  { sNo: 2, name: "Karthik", date: "08/09/2025", place: "SIMS Hospital, Chennai" },
+  { sNo: 3, name: "Praveen Rathinam", date: "08/09/2025", place: "SIMS Hospital, Chennai" },
+  { sNo: 4, name: "Suriya", date: "08/09/2025", place: "SIMS Hospital, Chennai" },
+  { sNo: 5, name: "Adley Brinton", date: "08/09/2025", place: "SIMS Hospital, Chennai" },
+  { sNo: 6, name: "Mani Chidambaram", date: "08/09/2025", place: "SIMS Hospital, Chennai" },
+  { sNo: 7, name: "Jai Krishnan", date: "09/09/2025", place: "Apollo Speciality Hospitals, Teynampet, Chennai" },
+  { sNo: 8, name: "Kaushik Raj", date: "09/09/2025", place: "Apollo Speciality Hospitals, Teynampet, Chennai" },
+  { sNo: 9, name: "Sanjay", date: "09/09/2025", place: "Apollo Speciality Hospitals, Teynampet, Chennai" },
+  { sNo: 10, name: "Ganesh Priya Vardhan", date: "09/09/2025", place: "Apollo Speciality Hospitals, Teynampet, Chennai" },
+  { sNo: 11, name: "Suresh Kannan", date: "09/09/2025", place: "Apollo Speciality Hospitals, Teynampet, Chennai" },
+  { sNo: 12, name: "Adaikkala Raj", date: "09/09/2025", place: "Apollo Speciality Hospitals, Teynampet, Chennai" },
+  { sNo: 13, name: "Naveen", date: "09/09/2025", place: "Apollo Speciality Hospitals, Teynampet, Chennai" },
+  { sNo: 14, name: "Shanthosh. A", date: "11/07/2026", place: "Chettinad Hospital, Kelambakkam" },
+  { sNo: 15, name: "Midhush Kanna V G", date: "11/07/2026", place: "Chettinad Hospital, Kelambakkam" },
+  { sNo: 16, name: "PRAVEEN KUMAR. G", date: "11/07/2026", place: "Chettinad Hospital, Kelambakkam" },
+  { sNo: 17, name: "Joshua C", date: "11/07/2026", place: "Chettinad Hospital, Kelambakkam" },
+];
 export default function AboutPage() {
   return (
     <div className="about-page">
@@ -48,18 +166,35 @@ export default function AboutPage() {
             Formed November 27, 1920. State HQ: Egmore, Chennai. Activities include AIDS/HIV Awareness, Disaster Management, First Aid, Health Services, and Vocational Training.
           </p>
         </section>
-
         <section>
-          <h2>Structure & Leadership</h2>
-          <ul>
-            <li><strong>Principal:</strong> Overall facilitator — institutional pillar, philosopher, and guide.</li>
-            <li><strong>YRC Programme Officer:</strong> Core Faculty Coordinator — strategic planning, budgeting, supervision, and liaison.</li>
-            <li><strong>Event Organizers:</strong> Senior or Active YRC Volunteers — logistics and on-ground operations.</li>
-            <li><strong>500+ Student Volunteers:</strong> From every batch — the heart of every drive.</li>
-          </ul>
-          <p>
-            Nearly 80% of SSN students are enrolled in the SSN YRC Club through official admission forms.
-          </p>
+            <h2 className="hierarchy-title">Leadership Hierarchy</h2>
+        </section>
+        <section className="hierarchy-section">
+          <div className="table-responsive">
+            <table className="hierarchy-table">
+              <thead>
+                <tr>
+                  <th>Level</th>
+                  <th>Position</th>
+                  <th>Office Bearer</th>
+                </tr>
+              </thead>
+              <tbody>
+                {LEADERSHIP_DATA.map((row, idx) => (
+                  <tr key={idx} className={row.isOdd ? "row-odd" : "row-even"}>
+                    <td>
+                      <div className="level-cell">
+                        {row.icon}
+                        <span>{row.level}</span>
+                      </div>
+                    </td>
+                    <td>{row.position}</td>
+                    <td>{row.bearer}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </section>
 
         <section>
@@ -81,12 +216,14 @@ export default function AboutPage() {
 
         <section>
           <h2>YRC Anthem</h2>
-          <p>
-            Don’t walk alone hands needs palms hey<br/>
-            Reach hands needs palms hey (x2)<br/>
-            Shanthi shanthi hey shanthi hey (x2)<br/>
-            Reach hands needs palms hey<br/>
-            Don’t walk alone needs hands hey
+          <p style ={{ whiteSpace: 'preserve', fontStyle: 'italic', marginTop: '1rem' }}>
+            Darthi karo nirmal karo beeda prabu hey<br></br>
+            Jeevan karo vujval nava jyothi baro hey-2<br></br>
+            Dukki janonki seva num kare-2<br></br>
+            Baththall thonko gale lagale-2<br></br>
+            Shanthi badha shanthi kaarya shanthi varada hey!<br></br>
+            Jeeevan karo vujval nava jyothi baro hey!<br></br>
+            Nava Jyothi baro hey, nava hyothi baro hey<br></br>
           </p>
         </section>
 
@@ -115,6 +252,32 @@ export default function AboutPage() {
             <li>Visitors Book</li>
             <li>Blood Donors Directory</li>
           </ul>
+        </section>
+
+        <section>
+          <h2>BLOOD DONORS DIRECTORY</h2>
+          <div className="table-responsive2">
+            <table className="hierarchy-table2">
+              <thead>
+                <tr>
+                  <th>S No.</th>
+                  <th>Donor Name</th>
+                  <th>Donated Date</th>
+                  <th>Donated Place</th>
+                </tr>
+              </thead>
+              <tbody>
+                {BLOOD_DONOR_DATA.map((donor) => (
+                  <tr key={donor.sNo}>
+                    <td>{donor.sNo}</td>
+                    <td>{donor.name}</td>
+                    <td>{donor.date}</td>
+                    <td>{donor.place}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </section>
       </main>
 

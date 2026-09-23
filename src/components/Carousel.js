@@ -9,7 +9,8 @@ const originalImages = [
   process.env.PUBLIC_URL + "/images/Image5.JPG",
   process.env.PUBLIC_URL + "/images/Image6.JPG",
   process.env.PUBLIC_URL + "/images/Image9.jpg",
-  process.env.PUBLIC_URL + "/images/Image10.jpg"
+  process.env.PUBLIC_URL + "/images/Image10.jpg",
+  process.env.PUBLIC_URL + "/images/Image11.jpg"
 ];
 
 function shuffleArray(arr) {
